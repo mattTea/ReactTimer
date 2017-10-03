@@ -4,11 +4,32 @@ var CountdownForm = require('CountdownForm');
 
 var Countdown = React.createClass({
   getInitialState: function () {
-    return {count: 0};
+    return {
+      count: 0,
+      countdownStatus: 'stopped'
+    };
+  },
+  componentDidUpdate: function (prevProps, prevState) {
+    if (this.state.countdownStatus !== prevState.countdownStatus) {
+      switch (this.state.countdownStatus) { // switch statement takes value you want to check as argument
+        case 'started':
+          this.startTimer(); // don't want to do much in componentDidUpdate, so best to call a separate function that handles the change
+          break;
+      }
+    }
+  },
+  startTimer: function () {
+    this.timer = setInterval(() => { //setInterval takes 2 arguments: an anon function and a time
+      var newCount = this.state.count - 1;
+      this.setState({
+        count: newCount >= 0 ? newCount : 0 // terinary operator '?' sets count to newCount if newCount >= 0, if not, set it to 0
+      });
+    }, 1000)
   },
   handleSetCountdown: function (seconds) {
     this.setState({
-      count: seconds
+      count: seconds,
+      countdownStatus: 'started'
     });
   },
   render: function () {
